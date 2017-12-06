@@ -39,7 +39,6 @@ passport.use(new Auth0Strategy({
     const db = app.get('db');
     const auth_id = profile.identities[0].user_id;
     const username = profile.nickname;
-
     db.auth.get_user({auth_id})
       .then(user => {
         if(user.length > 0) {
@@ -63,8 +62,12 @@ passport.deserializeUser((obj, done) => {
 });
 
 app.get('/api/auth/login', passport.authenticate('auth0',
-  {successRedirect: 'http://localhost:3000', failureRedirect: 'http://www.google.com', failureFlash: true})
+  {successRedirect: 'http://localhost:3000', failureRedirect: 'http://localhost:3000/auth', failureFlash: true})
 );
+
+app.get('/api/get_user', (req, res, next) => {
+  console.log(req.session);
+})
 
 const port = 3001;
 app.listen(port, () => {
